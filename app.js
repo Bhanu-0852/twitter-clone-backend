@@ -28,6 +28,10 @@ const initializeBdAndServer = async () => {
 }
 initializeBdAndServer()
 
+app.get("/", (request, response) => {
+  response.send("Twitter Clone Backend is Live and Running!");
+});
+
 const authenticationHeader = (request, response, next) => {
   let jwtToken
   const authHeader = request.headers['authorization']
