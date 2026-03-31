@@ -17,8 +17,9 @@ const initializeBdAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     })
-    app.listen(3000, () => {
-      console.log('Server is running at http://localhost:3000/')
+    const port=process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server is running at port ${port}`)
     })
   } catch (e) {
     console.log(`DB Error : ${e.message}`)
@@ -37,7 +38,7 @@ const authenticationHeader = (request, response, next) => {
     response.status(401)
     response.send('Invalid JWT Token')
   } else {
-    jwt.verify(jwtToken, 'SECRET_KEY', async (error, payload) => {
+    jwt.verify(jwtToken, process.env.JWT_SECRET || 'SECRET_KEY', async (error, payload) => {
       if (error) {
         response.status(401)
         response.send('Invalid JWT Token')
@@ -87,7 +88,7 @@ app.post('/login/', async (request, response) => {
     isValidPassword = await bcrypt.compare(password, dbUser.password)
     if (isValidPassword === true) {
       const payload = {username: username}
-      const jwtToken = jwt.sign(payload, 'SECRET_KEY')
+      const jwtToken = jwt.sign(payload, process.env.JWT_SECRET || 'SECRET_KEY')
       response.send({jwtToken})
     } else {
       response.status(400)
